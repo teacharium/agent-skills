@@ -1,0 +1,16 @@
+{
+  "name": "teacharium",
+  "description": "Teacharium plugins for AI agents.",
+  "owner": {
+    "name": "Teacharium",
+    "url": "https://app.teacharium.io"
+  },
+  "plugins": [
+    {
+      "name": "teacharium",
+      "source": "./",
+      "description": "Teacharium MCP server plus lesson and step-content authoring skills.",
+      "category": "productivity"
+    }
+  ]
+}

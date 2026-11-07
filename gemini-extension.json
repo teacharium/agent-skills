@@ -1,0 +1,10 @@
+{
+  "name": "teacharium",
+  "version": "1.0.0",
+  "description": "Teacharium MCP server plus lesson and step-content authoring skills.",
+  "mcpServers": {
+    "teacharium": {
+      "httpUrl": "https://app.teacharium.io/api/mcp"
+    }
+  }
+}

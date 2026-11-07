@@ -1,0 +1,12 @@
+{
+  "name": "teacharium",
+  "displayName": "Teacharium",
+  "description": "Author Teacharium lessons from your AI agent: the Teacharium MCP server (sign in with OAuth) plus skills for lesson structure and step content.",
+  "author": {
+    "name": "Teacharium",
+    "url": "https://app.teacharium.io"
+  },
+  "homepage": "https://docs.teacharium.io/docs/share-your-work/bring-your-own-agent",
+  "repository": "https://github.com/teacharium/agent-skills",
+  "keywords": ["teacharium", "lessons", "education", "mcp"]
+}

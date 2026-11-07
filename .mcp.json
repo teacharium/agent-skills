@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "teacharium": {
+      "type": "http",
+      "url": "https://app.teacharium.io/api/mcp"
+    }
+  }
+}

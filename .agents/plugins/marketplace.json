@@ -1,0 +1,20 @@
+{
+  "name": "teacharium",
+  "interface": {
+    "displayName": "Teacharium"
+  },
+  "plugins": [
+    {
+      "name": "teacharium",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
