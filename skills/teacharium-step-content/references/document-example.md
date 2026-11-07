@@ -14,7 +14,7 @@ This is the "Introduction" step of the sample lesson "Multiple Choice", exactly 
 
 - **Root grid.** `root.props.cells` defines 2 cell(s) on the 12x12 grid, and `root.props.items` holds one entry per cell with the same `id`, whose `content` array is that cell's components. Other root props (`gap`, `border`, `margin`, `backgroundSize`, `backgroundColor`, `backgroundRepeat`, `backgroundPosition`) style the page.
 - **Legacy fields.** Top-level `content` and `zones` are empty; components live in the grid items.
-- **Components.** Each component is `{ type, props }` with a generated `props.id` of the form `<Type>-<uuid>`. This step uses `MultipleChoice`, `Text`.
+- **Components.** Each component is `{ type, props }` with a generated `props.id` of the form `<Type>-<id>` (e.g. `Text-7jcCySO6Cw`). This step uses `MultipleChoice`, `Text`.
 - **Slots.** Components can nest: `Text` `Text-3177dab9-a5a0-4d8e-906f-47e15d00e116` sits at `items.0.content.0.choices.0.content.0`, inside a slot of its parent `MultipleChoice-117998c3-78df-4755-b33a-281154bf83e4`.
 - **Managed props.** `voiceover.content`, `voiceover.contentHash`, and `voiceover.cached` (and a top-level `contentHash`) are filled in by the editor; leave them out when you write props.
 - **Text content** is markdown in `props.content`, using only the MDX tags from the step content guide.

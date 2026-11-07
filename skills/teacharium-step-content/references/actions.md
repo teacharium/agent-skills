@@ -15,14 +15,14 @@ Fields of type `action` hold an array of action objects (`{ "actionType": ..., "
 
 1. **goToStep** - Navigate directly to a specific step in the lesson
    - Parameters:
-     - targetStepId (required): string - The ID of the step to navigate to
-   - Example: { "actionType": "goToStep", "parameters": { "targetStepId": "step-quiz-1" } }
+     - targetStepId (required): string - The ID (uuid) of the step to navigate to, from the lesson structure
+   - Example: { "actionType": "goToStep", "parameters": { "targetStepId": "3fb62e1a-3812-46d4-8fd6-7749857f9d03" } }
 
 2. **nextStep** - Advance to the next step in the lesson sequence
    - Parameters: None
    - Example: { "actionType": "nextStep", "parameters": {} }
 
-3. **previousStep** - Go back to the previous step in the lesson sequence
+3. **previousStep** - Go back to the step the learner came from (navigation history, not lesson order)
    - Parameters: None
    - Example: { "actionType": "previousStep", "parameters": {} }
 
@@ -32,71 +32,71 @@ Fields of type `action` hold an array of action objects (`{ "actionType": ..., "
 
 ### UI Control Actions
 
-4. **setNextButtonStatus** - Control the next button's visibility and state
+5. **setNextButtonStatus** - Control the next button's visibility and state
    - Parameters:
      - status (required): "hidden" | "enabled" | "disabled" - Choose whether the next button should be hidden, enabled, or disabled
    - Example: { "actionType": "setNextButtonStatus", "parameters": { "status": "disabled" } }
 
-5. **setPreviousButtonStatus** - Control the previous button's visibility and state
+6. **setPreviousButtonStatus** - Control the previous button's visibility and state
    - Parameters:
      - status (required): "hidden" | "enabled" | "disabled" - Choose whether the previous button should be hidden, enabled, or disabled
    - Example: { "actionType": "setPreviousButtonStatus", "parameters": { "status": "enabled" } }
 
-6. **setProgressBarStatus** - Control the progress bar's visibility
+7. **setProgressBarStatus** - Control the progress bar's visibility
    - Parameters:
      - status (required): "hidden" | "visible" - Choose whether the progress bar should be visible or hidden
    - Example: { "actionType": "setProgressBarStatus", "parameters": { "status": "hidden" } }
 
-7. **setCheckAnswerButtonStatus** - Control the check answer button's visibility and state
+8. **setCheckAnswerButtonStatus** - Control the check answer button's visibility and state
    - Parameters:
      - status (required): "hidden" | "enabled" | "disabled" - Choose whether the check answer button should be hidden, enabled, or disabled
    - Example: { "actionType": "setCheckAnswerButtonStatus", "parameters": { "status": "enabled" } }
 
-8. **setNextButtonLabel** - Customize the text shown on the next button
+9. **setNextButtonLabel** - Customize the text shown on the next button
    - Parameters:
      - label (required): string - The text to display on the next button
    - Example: { "actionType": "setNextButtonLabel", "parameters": { "label": "Continue" } }
 
-9. **setCheckAnswerButtonLabel** - Customize the text shown on the check answer button
+10. **setCheckAnswerButtonLabel** - Customize the text shown on the check answer button
    - Parameters:
      - label (required): string - The text to display on the check answer button
    - Example: { "actionType": "setCheckAnswerButtonLabel", "parameters": { "label": "Submit Answer" } }
 
-10. **setHintButtonStatus** - Control the hint button's visibility and state
+11. **setHintButtonStatus** - Control the hint button's visibility and state
     - Parameters:
       - status (required): "hidden" | "enabled" | "disabled" - Choose whether the hint button should be hidden, enabled, or disabled
     - Example: { "actionType": "setHintButtonStatus", "parameters": { "status": "enabled" } }
 
 ### Interaction Actions
 
-11. **showFeedback** - Display a slide-up feedback message with markdown support
+12. **showFeedback** - Display a slide-up feedback message with markdown support
     - Parameters:
       - message (required): string - The feedback message to display (supports markdown formatting)
-      - variant (required): "correct" | "incorrect" | "info" | "hint" - The type of feedback to display
+      - variant (optional, default "info"): "correct" | "incorrect" | "info" | "hint" - The type of feedback to display
       - autoHideMs (optional): number - Hide the feedback automatically after this many milliseconds
       - showNextButton (optional): boolean - Show a Next button on the feedback popup to advance to the next step
     - Example: { "actionType": "showFeedback", "parameters": { "message": "**Correct!** Well done!", "variant": "correct", "showNextButton": true } }
 
-12. **hideFeedback** - Clear and hide any displayed feedback message
+13. **hideFeedback** - Clear and hide any displayed feedback message
     - Parameters: None
     - Example: { "actionType": "hideFeedback", "parameters": {} }
 
-13. **checkAnswer** - Trigger answer checking logic (emitted when check answer button is clicked)
+14. **checkAnswer** - Trigger answer checking logic (emitted when check answer button is clicked)
     - Parameters: None
     - Example: { "actionType": "checkAnswer", "parameters": {} }
 
-14. **showHint** - Trigger hint display logic (emitted when hint button is clicked)
+15. **showHint** - Trigger hint display logic (emitted when hint button is clicked)
     - Parameters: None
     - Example: { "actionType": "showHint", "parameters": {} }
 
-15. **audioPlay** - Start playback for voiceover audio within the lesson
+16. **audioPlay** - Start playback for voiceover audio within the lesson
     - Parameters:
-      - widgetId (optional): string - Target a specific voiceover component. Leave blank to play all voiceovers on this step
+      - widgetId (optional): string - The id of the Voiceover component to play (its component id; you can choose it by passing props.id when adding the Voiceover). Leave blank to play all voiceovers on this step
     - Example: { "actionType": "audioPlay", "parameters": { "widgetId": "intro-voiceover" } }
 
 ### Data Actions
 
-16. **setVariable** - Update a lesson variable with a value or expression
+17. **setVariable** - Update a lesson variable with a value or expression
     - Parameters:
       - variableName (required): string - The name of the variable to update
       - value (required): string | number | boolean - The value or expression to set. For number variables, supports math expressions like "{{score}} + 10". For string variables, supports template expressions like "Hello, {{name}}!". Boolean variables accept true/false.

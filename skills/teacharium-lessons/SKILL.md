@@ -77,7 +77,7 @@ Each lesson has one step transition: the animation played whenever the learner m
 
 ## Recommended workflow
 
-1. **Find the lesson.** `list_lessons`, then `get_lesson` for the structure tree, abstract, variables, and recent templates. Ask the user which lesson if it is ambiguous.
+1. **Find the lesson.** `list_lessons`, then `get_lesson` for the structure tree, abstract, variables, and recent templates. Ask the user which lesson if it is ambiguous. For a new lesson, `create_lesson` with a title, abstract, and folder if the user keeps lessons in folders; it starts with one empty section and step, so rename and fill them (or delete them once you have built your own) rather than leaving them empty.
 2. **Read the guide.** `get_authoring_guide` (topic `step-content` by default; `fields` and `actions` for value formats) for the step content rules, unless you already have them from this skill.
 3. **List components.** `list_components` for this lesson's catalog, one line per component. It is the only source of truth for which components exist: use a dedicated component (for example a multiple-choice widget) rather than imitating it with Text. Call it again with `components` set to the ones you will use to get their exact fields before adding them.
 4. **Inspect before editing.** `get_step` for each step you will touch. Keep its `updated_at` to pass as `expectedUpdatedAt`, and its component IDs and paths for edits.
@@ -117,6 +117,7 @@ Argument names and shapes are defined by each tool's input schema; read the sche
 
 ### Lesson meta
 
+- `create_lesson`: Create a new lesson with a `title`, optionally in a `folder` (a "/"-separated path such as "Science/Biology"; missing folders are created at every level), with `tags` and an `abstract`. It starts with one section holding one empty step; rename or fill them. Each call creates another lesson, so do not blindly retry.
 - `update_lesson`: Change the lesson title, tags, `stepTransition` (the lesson-wide animation between steps: none, fade, slide, push, pushUp, zoom, wipe), or `folder` (a "/"-separated path such as "Science/Biology"; missing folders are created at every level, "" moves the lesson to the root).
 - `update_abstract`: Change the abstract: `oldStr`/`newStr` for a targeted replace, or `abstract` to rewrite it. A history snapshot is kept.
 - `get_custom_css`: Read the lesson's custom CSS (one stylesheet applied to every step).
@@ -128,7 +129,7 @@ Argument names and shapes are defined by each tool's input schema; read the sche
 ### Step content
 
 - `configure_root_grid`: Define the 12x12 root grid cells (call before adding content). (accepts `expectedUpdatedAt`)
-- `add_components`: Add components to a cell (`cellId`) or a slot (`path`); returns new IDs and any auto-created variables. (accepts `expectedUpdatedAt`)
+- `add_components`: Add components to a cell (`cellId`) or a slot (`path`); returns the new component IDs and the step outline. (accepts `expectedUpdatedAt`)
 - `edit_component`: Merge prop updates into one component by ID. (accepts `expectedUpdatedAt`)
 - `move_component`: Move a component to another slot, cell or index. (accepts `expectedUpdatedAt`)
 - `delete_component`: Remove a component and everything nested in it. (accepts `expectedUpdatedAt`)
