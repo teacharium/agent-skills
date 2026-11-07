@@ -59,6 +59,17 @@ These class names and attributes are rendered by the Teacharium player and kept 
 .comp-Text-1a2b3c {
   font-size: 1.25rem;
 }
+
+/* An Image that fills its grid cell (cell id "bg"), cropped to cover it.
+   Target the wrapper and the image: the Image's own width/height props
+   only set defaults that these rules override. */
+[data-teacharium-cell="bg"] .tp-image-wrapper,
+[data-teacharium-cell="bg"] .tp-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 ```
 
 ## Cautions
