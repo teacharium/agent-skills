@@ -31,6 +31,7 @@ Field definitions from `list_components` use these custom types. Each entry give
   - `"{{score}}"` - Variable reference
   - `"{{totalPoints}} + 5"` - Variable reference with arithmetic
 - Important: Always use strings, not numbers. Variables must be wrapped in `{{}}`
+- Tip: for money or other exact decimals, keep variables as whole numbers in a small unit (`{{price_cents}} * {{qty}}`) rather than decimals like 0.1, which are not exact
 
 **stringExpression** - String value or variable expression
 - Value format: string (can contain variables or plain text)

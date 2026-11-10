@@ -74,16 +74,16 @@ The step uses a 12x12 GRID-BASED ROOT LAYOUT using CSS Grid.
 
 - **Text**: Rich text component supporting markdown formatting. Supports substituting variables and gathering input from the user via MDX
   - Properties: { content: string } - Markdown content with variable substitution support includes these MDX tags:
-     - <NumericExpression expression="{{x}}" /> Displays the numeric variable x
+     - <NumericExpression expression="{{x}}" /> Displays the numeric variable x. Optional format="$#,##0.00" sets the number format and scale="100" divides by 100 first (see Formatting Numbers)
      - <StringExpression expression="{{y}}" /> Displays the string variable y
-     - <NumericInput variable="answer" label="What's 1+1?" /> Prompts the user to enter a number and store it in the answer variable
+     - <NumericInput variable="answer" label="What's 1+1?" /> Prompts the user to enter a number and store it in the answer variable. Optional scale="100" stores the typed value × 100 as a whole number (typing 12.5 stores 1250)
      - <StringInput variable="name" label="What's your name?" placeholder="First Last" /> Prompts the user to enter a name and stores it in the name variable.
      - <SelectField variable="color" label="Favorite Color?" placeholder="none" options={[{"label":"Red","value":"red"},{"label":"Blue","value":"blue"}]} /> Prompts the user for a color from a list, and stores it in the color variable
     THESE ARE THE ONLY VALID MDX TAGS, ESCAPE ALL OTHER HTML STYLE TAGS IN THE MARKDOWN
 
 ## Other components
 
-Every other component (questions, media, layout, simulations, logic) comes from the widgets enabled for the lesson. The catalog differs per lesson and changes as widgets are published, so never rely on a remembered or static list: call `list_components` (or read `teacharium://lessons/{id}/components`) for the names, usage notes, and field definitions, and only use components listed there.
+Every other component (questions, media, layout, simulations, logic) comes from the widgets enabled for the lesson. The catalog differs per lesson and changes as widgets are published, so never rely on a remembered or static list: call `list_components` (or read `teacharium://lessons/{id}/components`) for the names, usage notes, and field definitions, and only use components listed there. If a component you need comes from a widget that is not enabled for the lesson (for example one of the organization's custom widgets), find it with `list_widgets` and enable it with `set_lesson_widgets` first.
 
 ## Automatic Variables
 
@@ -94,6 +94,20 @@ The names are `item_<name>_<property>`, where `<name>` is the component's `name`
 ## Expressions
 - Use <StringExpression expression="{{varName}}" /> or <NumericExpression expression="{{varName}}" /> to reference variables in markdown.
 - Do not use raw {{varName}} in markdown, always use the Expression component
+
+## Formatting Numbers
+- NumericExpression shows the result without float noise but with every decimal, so set format to control decimals: <NumericExpression expression="{{total}} / {{count}}" format="0.0" />
+- Format patterns: 0 is a digit that is always shown, # is a digit shown only when needed, a comma in the whole-number part groups thousands, and any other text is copied as-is. Examples: "0.00" (1.50), "0.##" (1.5), "#,##0" (12,345), "$#,##0.00" ($1,234.50), "0.# kg" (2.5 kg). % is plain text; it does not multiply by 100.
+- In string templates (StringExpression, stringExpression and svgSource fields) use the format helper: {{format price_cents "$#,##0.00" 100}} — the value, then a pattern, then an optional scale to divide by.
+
+## Precise Numbers (money, measurements, fractional steps)
+Numbers are binary floating point, so decimals like 0.1 are not exact (0.1 + 0.2 = 0.30000000000000004) and == comparisons on them can fail. When a lesson needs exact decimals, use whole numbers in a smaller unit:
+- Store integers in the smallest unit needed and name the variable after it: price_cents (1250 means $12.50), mass_mg, length_mm, temp_tenths.
+- Do all arithmetic, conditions and correct answers in that unit, e.g. {{price_cents}} * {{qty}} >= 5000. Integer arithmetic is exact.
+- Give Slider, Stepper, Dial, ProgressBar and NumericDisplay whole-number minValue, maxValue and stepSize in the stored unit, then set displayScale (100) and numberFormat ("$0.00") so learners read dollars.
+- Show values with <NumericExpression expression="{{price_cents}}" format="$#,##0.00" scale="100" /> or {{format price_cents "$#,##0.00" 100}}.
+- Collect typed values with <NumericInput variable="price_cents" scale="100" />, so the learner types dollars and the variable gets cents.
+- Use plain decimals only when nothing compares them exactly; if a numeric answer can have rounding, give it a tolerance.
 
 ## Templates
 

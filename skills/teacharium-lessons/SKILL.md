@@ -25,9 +25,9 @@ For how a Teacharium feature works for authors and learners (publishing, embeddi
 - **Section**: an ordered group of related steps, such as an introduction, instruction, practice, quiz, or conclusion.
 - **Step**: one screen the learner sees. Its content is a Puck document laid out on a 12x12 root grid (see the step content guide).
 - **Abstract**: a markdown overview of the lesson's goals and content. It is the plan the lesson is built from and the context every AI tool reads.
-- **Variables**: lesson-wide values of type `string`, `number`, or `boolean` with an initial value. Components read and write them; text shows them with expression tags; conditions and actions use them for branching and scoring. Interactive "item" components (questions) also create variables automatically.
+- **Variables**: lesson-wide values of type `string`, `number`, or `boolean` with an initial value. Components read and write them; text shows them with expression tags; conditions and actions use them for branching and scoring. Interactive "item" components (questions) also create variables automatically. When numbers need exact decimals (money, measurements, fractional steps), plan them as whole numbers in a smaller unit, such as `price_cents` or `mass_mg`, and format them for display; decimals like 0.1 are not exact in floating point.
 - **Templates**: saved step documents shared across the organization. Applying a template copies its content into a step (apply-once, not synced) and gives every component a fresh ID.
-- **Components and widgets**: the building blocks placed on a step. `Text` is built in; everything else comes from widget packages enabled for the lesson, so the available set differs per lesson. Always read it from `list_components`.
+- **Components and widgets**: the building blocks placed on a step. `Text` is built in; everything else comes from widget packages enabled for the lesson, so the available set differs per lesson. Always read it from `list_components`. Public widgets are enabled by default; an organization's own custom widgets are off until enabled for the lesson. `list_widgets` shows every widget the organization can use and which are enabled, and `set_lesson_widgets` turns them on or off.
 
 ## Authoring philosophy
 
@@ -79,7 +79,7 @@ Each lesson has one step transition: the animation played whenever the learner m
 
 1. **Find the lesson.** `list_lessons`, then `get_lesson` for the structure tree, abstract, variables, and recent templates. Ask the user which lesson if it is ambiguous. For a new lesson, `create_lesson` with a title, abstract, and folder if the user keeps lessons in folders; it starts with one empty section and step, so rename and fill them (or delete them once you have built your own) rather than leaving them empty.
 2. **Read the guide.** `get_authoring_guide` (topic `step-content` by default; `fields` and `actions` for value formats) for the step content rules, unless you already have them from this skill.
-3. **List components.** `list_components` for this lesson's catalog, one line per component. It is the only source of truth for which components exist: use a dedicated component (for example a multiple-choice widget) rather than imitating it with Text. Call it again with `components` set to the ones you will use to get their exact fields before adding them.
+3. **List components.** `list_components` for this lesson's catalog, one line per component. It is the only source of truth for which components exist: use a dedicated component (for example a multiple-choice widget) rather than imitating it with Text. Call it again with `components` set to the ones you will use to get their exact fields before adding them. If the lesson needs a component that is not listed, or the user mentions one of their organization's custom widgets, call `list_widgets` with the `lessonId`: a custom widget is off until `set_lesson_widgets` enables it for the lesson, and a public widget may have been disabled. Enable only what the lesson needs, then call `list_components` again.
 4. **Inspect before editing.** `get_step` for each step you will touch. Keep its `updated_at` to pass as `expectedUpdatedAt`, and its component IDs and paths for edits.
 5. **Plan against the abstract.** Map the request onto sections and steps (one instructional moment per step). Create structure first with `create_section` / `create_step`, and check `list_templates` for a layout worth reusing.
 6. **Build incrementally.** `configure_root_grid` if the step needs more than one region, then `add_components` in small groups, adding components that create variables before components that read them. Use the IDs and variable names each call returns.
@@ -94,8 +94,8 @@ Argument names and shapes are defined by each tool's input schema; read the sche
 
 ### Discover
 
-- `list_lessons`: Find lessons you can edit; `search` matches lesson titles and step names. Pages with `offset`.
-- `get_lesson`: Structure tree (sections and steps with IDs), abstract, variables and recently used templates.
+- `list_lessons`: Find lessons you can edit and see their folder paths. `search` matches lesson titles and step names. Pages with `offset`.
+- `get_lesson`: Folder path, structure tree (sections and steps with IDs), abstract, variables and recently used templates.
 - `get_step`: A compact outline of a step (cells, component IDs, paths, key props) and its `updated_at`; `includeDocument` adds the full Puck document.
 - `list_components`: The lesson's components, one line each; pass `components` for full field definitions of the ones you will use.
 - `get_authoring_guide`: One topic of the authoring rules (`step-content` by default; also lessons, fields, actions, custom-css, workflow).
@@ -125,6 +125,11 @@ Argument names and shapes are defined by each tool's input schema; read the sche
 - `add_variables`: Create lesson variables (string, number or boolean).
 - `edit_variable`: Rename a variable or change its type or initial value.
 - `delete_variable`: Remove a variable. Content that references it will break. (requires `confirm: true`)
+
+### Widgets
+
+- `list_widgets`: The widget packages the organization can use (its own custom widgets plus public ones) with their components and publish state; with `lessonId`, which are enabled for that lesson.
+- `set_lesson_widgets`: Turn widgets on (`enable`) or off (`disable`) for a lesson, by id or name. Custom widgets start off; public ones start on. Disabling lists the steps whose components stop rendering.
 
 ### Step content
 
