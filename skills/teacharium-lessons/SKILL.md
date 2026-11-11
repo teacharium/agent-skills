@@ -84,9 +84,11 @@ Each lesson has one step transition: the animation played whenever the learner m
 5. **Plan against the abstract.** Map the request onto sections and steps (one instructional moment per step). Create structure first with `create_section` / `create_step`, and check `list_templates` for a layout worth reusing.
 6. **Build incrementally.** `configure_root_grid` if the step needs more than one region, then `add_components` in small groups, adding components that create variables before components that read them. Use the IDs and variable names each call returns.
 7. **Add media.** Find images, audio and video with `list_media` (`list_media_folders` shows how the library is organized; pass `folder` to look inside one). To use a local file, `create_media_upload`, PUT the bytes to the returned `uploadUrl`, then `complete_media_upload` with a name and accessibility text. File what you upload in a media folder named for the lesson (for example `folder: "Lessons/<lesson title>"`) unless the user's library uses another scheme or they say otherwise. Put the returned `media:<id>` or `video:<id>` value in the component's media field; never invent ids.
-8. **Preview.** `get_preview_url` with a `stepId` (or `lessonId` for the whole lesson) returns a live URL that renders the draft with no login. Open it with your browser tool if you have one, or give it to the user, and fix what looks wrong. If your browser tool can run JavaScript in the page, `window.teacharium.getState()` returns the live variables, question results, current step, visit history and recent events (`get_authoring_guide` topic `preview`).
-9. **Keep the abstract in sync.** `update_abstract` with `oldStr`/`newStr` so the abstract describes what you built.
-10. **Report briefly** what changed, by section and step name, plus any lock warnings.
+8. **Generate voiceovers.** If you turned on any voiceovers (`voiceover.enabled: true`, with `voiceId: "default"` unless the user wants a specific voice from `list_voices`), call `generate_voiceovers` with the `lessonId` (`dryRun: true` first shows what is missing and the estimated cost). They are silent until generated. Repeat the call while it reports clips still missing.
+9. **Preview.** `get_preview_url` with a `stepId` (or `lessonId` for the whole lesson) returns a live URL that renders the draft with no login. Open it with your browser tool if you have one, or give it to the user, and fix what looks wrong. If your browser tool can run JavaScript in the page, `window.teacharium.getState()` returns the live variables, question results, current step, visit history and recent events (`get_authoring_guide` topic `preview`).
+10. **Keep the abstract in sync.** `update_abstract` with `oldStr`/`newStr` so the abstract describes what you built.
+11. **Publish when asked.** Edits change the draft only; learners see published versions. `publish_lesson` with `action: "list"` shows the published versions and whether the draft has unpublished changes. When the user wants the changes live, confirm with them, then `publish_lesson` with `action: "publish"` and short version notes. Fix any playability problems or silent voiceovers it reports and publish again.
+12. **Report briefly** what changed, by section and step name, plus any lock warnings, and whether you published (and which version).
 
 ## Tool cheat sheet
 
@@ -131,6 +133,11 @@ Argument names and shapes are defined by each tool's input schema; read the sche
 - `list_widgets`: The widget packages the organization can use (its own custom widgets plus public ones) with their components and publish state; with `lessonId`, which are enabled for that lesson.
 - `set_lesson_widgets`: Turn widgets on (`enable`) or off (`disable`) for a lesson, by id or name. Custom widgets start off; public ones start on. Disabling lists the steps whose components stop rendering.
 
+### Voiceovers
+
+- `list_voices`: The organization's text-to-speech voices (id, base voice, speed, speaking style); with `lessonId`, which one "default" means for that lesson. Voiceovers pick one with `voiceover.voiceId`.
+- `generate_voiceovers`: Generate the text-to-speech audio for a lesson's enabled voiceovers (optionally one `stepId` or some `componentIds`). Voiceovers are silent until generated. `dryRun: true` reports missing clips and estimated cost. Charged to the organization's AI credit; call again while clips remain.
+
 ### Step content
 
 - `configure_root_grid`: Define the 12x12 root grid cells (call before adding content). (accepts `expectedUpdatedAt`)
@@ -162,6 +169,10 @@ Argument names and shapes are defined by each tool's input schema; read the sche
 
 - `get_preview_url`: A live, short-lived URL that renders a step (`stepId`) or the whole lesson (`lessonId`) with no login. In the page, `window.teacharium.getState()` returns the live player state for debugging.
 
+### Publishing
+
+- `publish_lesson`: `action: "list"` shows the published versions (newest first, with notes and the course chapters playing each) and whether the draft has unpublished changes. `action: "publish"` publishes the saved draft as a new numbered version, which is what learners see (embeds without a pinned version switch immediately; course chapters switch unless `updateCourses: false`), and reports playability problems and voiceovers without audio. Ask the user before publishing. (requires `confirm: true`)
+
 ### Resources and prompts
 
 For clients that prefer resources, the same data is readable at:
@@ -179,7 +190,7 @@ Prompts:
 
 ## Safety rules
 
-- **Confirm destructive actions with the user.** `delete_section`, `delete_step`, `delete_variable`, `replace_step_content`, `apply_template`, `restore_step_version`, `delete_media`, `delete_media_folder` refuse to run without `confirm: true`. Only pass it after the user has agreed to that specific deletion, replacement or restore, naming what will be lost.
+- **Confirm destructive actions with the user.** `delete_section`, `delete_step`, `delete_variable`, `replace_step_content`, `apply_template`, `restore_step_version`, `delete_media`, `delete_media_folder`, `publish_lesson` refuse to run without `confirm: true`. Only pass it after the user has agreed to that specific deletion, replacement or restore, naming what will be lost.
 - **Pass `expectedUpdatedAt`.** Read the step with `get_step` and send its `updated_at` as `expectedUpdatedAt` with every step-content write. If the step changed since you read it, the write is rejected with a conflict and nothing is saved: re-read the step, re-apply your change to the new content, and try again. Never retry blindly.
 - **Respect the editor lock.** If someone else has the lesson open in the editor, writes are refused with their name; tell the user and wait rather than working around it. If the user themselves has it open, writes succeed and appear in their editor live; if they are editing the same step at that moment, the editor asks them which version to keep. Mention it when you change a step they may be editing.
 - **Build incrementally.** Use `add_components`, `edit_component`, `move_component`, and `delete_component` for changes. Use `replace_step_content` only for a deliberate full rewrite, and preview the step before replacing work the author did by hand.
