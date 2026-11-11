@@ -17,6 +17,8 @@ Teacharium is a lesson authoring platform. This skill explains how lessons are o
 
 For the content of individual steps (grid layout, components, MDX tags, expressions, field values, actions), also use the `teacharium-step-content` skill.
 
+**Delegating step building.** Plan the lesson (structure, abstract, shared variables, voices) yourself, then build steps on a faster model. If a `teacharium-step-builder` subagent is available (the Teacharium plugin for Claude Code includes one, running on Sonnet), hand it one step at a time: the `lessonId`, `stepId`, what the step should teach or ask, the components or layout you want, and the lesson variables it may read or write. Steps are independent, so several can be built in parallel. Then review each step (`get_step`, `get_preview_url`), generate voiceovers, and report. Without such a subagent, build the steps yourself with the `teacharium-step-content` skill.
+
 For how a Teacharium feature works for authors and learners (publishing, embedding, sharing, LTI, widgets, branching, fonts, narration, the developer API), read the product documentation in markdown: start from the index at https://docs.teacharium.io/llms.txt, fetch any page it lists (every docs URL also works with `.md` appended), or load the whole set at https://docs.teacharium.io/llms-full.txt. The docs describe the editor UI; the MCP tools remain the source of truth for lesson data.
 
 ## The lesson model

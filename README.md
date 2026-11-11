@@ -12,6 +12,8 @@ This repo is a plugin for Claude, Codex, GitHub Copilot, and Gemini CLI. It give
 | [`teacharium-lessons`](skills/teacharium-lessons/SKILL.md) | Lesson structure, authoring approach, the MCP workflow, tool cheat sheet, safety rules |
 | [`teacharium-step-content`](skills/teacharium-step-content/SKILL.md) | Step content: the 12x12 grid, Text and MDX tags, expressions, variables, custom fields, actions |
 
+- **In Claude Code, a step-builder subagent**, [`teacharium-step-builder`](agents/teacharium-step-builder.md). The agent plans the lesson, then hands each step to this subagent, which runs on Sonnet to build steps faster and more cheaply. Other agents ignore it and build steps themselves with the skills.
+
 Full guide: [Bring your own agent](https://docs.teacharium.io/docs/share-your-work/bring-your-own-agent).
 
 ## Install
@@ -118,7 +120,7 @@ Agents without skills can get the same guidance from the server: the `get_author
 
 ## About this repo
 
-The files in `skills/` are generated from the prompts in the Teacharium app, so the skills and the built-in assistant always give the same advice. Don't edit them here; changes made by hand are overwritten on the next release.
+The files in `skills/` and `agents/` are generated from the prompts in the Teacharium app, so the skills and the built-in assistant always give the same advice. Don't edit them here; changes made by hand are overwritten on the next release.
 
 | File | Read by |
 | ---- | ------- |

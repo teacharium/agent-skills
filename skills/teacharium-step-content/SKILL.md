@@ -16,6 +16,10 @@ Each Teacharium step is a Puck document rendered on a 12x12 grid. These are the 
 
 The component catalog is per lesson: always get it from `list_components` (or `teacharium://lessons/{id}/components`), never from a static list. Use the `teacharium-lessons` skill for lesson structure and the overall workflow.
 
+## Choosing a model
+
+Building steps is many small, well-specified tool calls (grid, components, field values) that follow the rules below, so a fast mid-tier model does it well and costs much less than the largest models. In Claude, use **Sonnet** for step building: with the Teacharium plugin for Claude Code, hand each step to the `teacharium-step-builder` subagent (it runs on Sonnet and follows this skill); elsewhere in Claude, use a Sonnet subagent or session given the step's goal, its `stepId`, and the lesson's abstract and variables. Keep planning the lesson, and reviewing the result, on the model you are using. In other agents, use the equivalent tier: a current fast, capable coding model rather than the largest reasoning model.
+
 ## Document model
 
 A step's content is a Puck document (JSON):
