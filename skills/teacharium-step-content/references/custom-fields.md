@@ -12,8 +12,9 @@ Field definitions from `list_components` use these custom types. Each entry give
 ## Custom Field Types
 
 **imageMedia** - Image from the media library
-- Value format: string, `"media:<id>"` (an id from the media library)
-- Example: `"media:3f1c2b9e-8a4d-4c7e-9b21-5d6e7f8a9b0c"`
+- Value format: string, `"media:<id>"` (an id from the media library), or `"media:<id>?w=<width>"` to show it at a display width
+- Example: `"media:3f1c2b9e-8a4d-4c7e-9b21-5d6e7f8a9b0c?w=960"`
+- Image sizes: `?w=` serves the image at the next standard width up (200, 400, 960 or 1440 px, never wider than the original, same aspect ratio), so lessons load smaller files. Add it to every image, picking the width the image fills on the 12-column grid: icons and small inline images `?w=200`, 1-4 columns `?w=400`, 5-8 columns `?w=960`, 9-12 columns or a full-step background `?w=1440`. Leave it off only when the full-resolution original is needed (for example an image learners zoom into). The resized copy is built the first time the size is requested (previewing the lesson does this); until then the original is served.
 
 **videoMedia** - Video from the video library
 - Value format: string, `"video:<id>"` (an id from the video library)
